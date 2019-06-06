@@ -143,7 +143,10 @@ end
 
 
 
-
+%   Binxu Wang                           binxu.wang@wustl.edu
+% 
+% CHANGELOG  (Jun 6, 2019) - Binxu
+%   Add support for color image
 %%------------------------------------------------------------
 %
 % AUTHORS
