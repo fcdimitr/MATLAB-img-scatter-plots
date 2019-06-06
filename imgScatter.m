@@ -11,6 +11,9 @@ function imgScatter(Y, I, mask, imgW, imgH)
 %
 %   YDATA       2-D points for scatter plot             [n-by-2]
 %   IMG         Images for each point                   [p-by-r-by-n]
+%               If it's a color image, it should have size [p-by-r-by-c-by-n]
+%               c is the color channel. And the IMG 
+%               shoud be in uint8 format instead of double
 % 
 % OPTIONAL
 % 
@@ -52,14 +55,19 @@ function imgScatter(Y, I, mask, imgW, imgH)
   for i = 1:n
     
     if mask(i) == 1
-      im = I(:,:,i);
-      
+      if length(size(I))==3
+         im = I(:,:,i);
+         im = im';
+         colormap gray;
+      elseif length(size(I))==4
+         im = I(:,:,:,i);
+         im = permute(im, [2,1,3]);
+      end
       ys=linspace(Y(i, 2) - imgW/2, Y(i, 2) + imgW/2, size(im, 1) );
       xs=linspace(Y(i, 1) - imgH/2, Y(i, 1) + imgH/2, size(im, 2) );
       
-      colormap gray;
-      imagesc(xs,ys,imrotate(im',90))
-    
+      
+      imagesc(xs,ys,imrotate(im,90))
     end
       
   end % for i = 1:n
@@ -67,7 +75,10 @@ function imgScatter(Y, I, mask, imgW, imgH)
   
 end
 
-
+%   Binxu Wang                           binxu.wang@wustl.edu
+% 
+% CHANGELOG
+%   Add support for color image
 %%------------------------------------------------------------
 %
 % AUTHORS

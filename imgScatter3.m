@@ -12,6 +12,9 @@ function imgScatter3(Y, I, mask, imgW, imgH, az, el)
 %
 %   YDATA       3-D points for scatter plot             [n-by-3]
 %   IMG         Images for each point                   [p-by-r-by-n]
+%               If it's a color image, it should have size [p-by-r-by-c-by-n]
+%               c is the color channel. And the IMG 
+%               shoud be in uint8 format instead of double
 % 
 % OPTIONAL
 % 
@@ -74,7 +77,14 @@ function imgScatter3(Y, I, mask, imgW, imgH, az, el)
     
     if mask(i) == 1
       im = I(:,:,i);
-      
+      if length(size(I))==3
+         im = I(:,:,i);
+         im = im';
+         colormap gray;
+      elseif length(size(I))==4
+         im = I(:,:,:,i);
+         im = permute(im, [2,1,3]);
+      end
       [imX,imY] = meshgrid( ...
           linspace(- imgW/2, imgW/2, size(im, 1) ) + Y(i,1), ...
           linspace(- imgH/2, imgH/2, size(im, 2) ) + Y(i,2) );
@@ -82,9 +92,8 @@ function imgScatter3(Y, I, mask, imgW, imgH, az, el)
       
       imZ = Y(i,3) * ones( size(imX) );
       
-      s{i,1} = surf(imX,imY,imZ,im');
+      s{i,1} = surf(imX,imY,imZ,im);
       s{i,2} = Y(i,:);
-      colormap gray
       s{i,1}.EdgeColor = 'none';
     end
     
